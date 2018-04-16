@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="com.wulghash.imagetestapp.ImageWork.ImageFragment">
+
+    <ImageView
+         android:src="@mipmap/ic_launcher"
+         android:id="@+id/main_image"
+         android:paddingRight="50dp"
+         android:paddingLeft="35dp"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content" />
+
+
+
+    <LinearLayout
+        android:paddingLeft="50dp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+
+
+        <Button
+            android:id="@+id/rotate_btn"
+            android:text="@string/rotate_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/invert_btn"
+            android:text="@string/invert_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/mirror_btn"
+            android:text="@string/mirror_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
