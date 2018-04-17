@@ -41,6 +41,7 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
         if (position % 2 == 0) holder.mView.setBackgroundColor(Color.GRAY);
+        else holder.mView.setBackgroundColor(Color.WHITE);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
