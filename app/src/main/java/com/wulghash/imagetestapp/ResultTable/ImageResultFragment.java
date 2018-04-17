@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.wulghash.imagetestapp.R;
 import com.wulghash.imagetestapp.ResultTable.dummy.DummyContent;
@@ -86,6 +87,13 @@ public class ImageResultFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
+    public void lol() {
+        Toast.makeText(getActivity(), "LOL!",
+                Toast.LENGTH_SHORT).show();
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this

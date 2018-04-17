@@ -1,55 +1,65 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     tools:context="com.wulghash.imagetestapp.ImageWork.ImageFragment">
 
     <ImageView
-         android:src="@mipmap/ic_launcher"
-         android:id="@+id/main_image"
-         android:paddingRight="50dp"
-         android:paddingLeft="35dp"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content" />
 
+        android:visibility="gone"
+        android:id="@+id/main_image"
+        android:layout_width="175dp"
+        android:layout_height="180dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
-        android:paddingLeft="50dp"
-        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="36dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <Button
             android:id="@+id/rotate_btn"
-            android:text="@string/rotate_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/rotate_btn" />
 
         <Button
             android:id="@+id/invert_btn"
-            android:text="@string/invert_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/invert_btn" />
 
         <Button
             android:id="@+id/mirror_btn"
-            android:text="@string/mirror_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-
-
+            android:layout_height="wrap_content"
+            android:text="@string/mirror_btn" />
 
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/choose_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="84dp"
+        android:text="@string/choose_image_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

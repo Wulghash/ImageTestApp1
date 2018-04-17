@@ -1,5 +1,6 @@
 package com.wulghash.imagetestapp.ResultTable;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
+        if (position % 2 == 0) holder.mView.setBackgroundColor(Color.GRAY);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

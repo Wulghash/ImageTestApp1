@@ -10,7 +10,7 @@ public interface ImageFragmentContact {
 
         void showNoImageError();
 
-        void onSelectNewImage();
+        void onSelectNewImage(int item);
 
         void onRotateImage();
 
@@ -18,10 +18,11 @@ public interface ImageFragmentContact {
 
         void onInvertColors();
 
+        void onAddImageToResult();
+
     }
 
     interface  UserActionListener {
 
-        void onAddImageToResult();
     }
 }
