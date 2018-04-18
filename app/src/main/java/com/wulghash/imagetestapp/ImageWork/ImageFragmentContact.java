@@ -1,5 +1,7 @@
 package com.wulghash.imagetestapp.ImageWork;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Федор on 4/15/2018.
  */
@@ -18,7 +20,7 @@ public interface ImageFragmentContact {
 
         void onInvertColors();
 
-        void onAddImageToResult();
+        void onAddImageToResult(Bitmap bitmap);
 
     }
 

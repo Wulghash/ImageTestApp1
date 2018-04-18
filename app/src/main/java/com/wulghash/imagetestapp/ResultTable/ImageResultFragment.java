@@ -1,6 +1,7 @@
 package com.wulghash.imagetestapp.ResultTable;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,11 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.wulghash.imagetestapp.R;
-import com.wulghash.imagetestapp.ResultTable.dummy.DummyContent;
-import com.wulghash.imagetestapp.ResultTable.dummy.DummyContent.DummyItem;
 
-import java.util.List;
-
+import java.util.ArrayList;
 
 public class ImageResultFragment extends Fragment {
 
@@ -24,6 +22,7 @@ public class ImageResultFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private ResultImagesRecyclerViewAdapter resultImagesRecyclerViewAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,7 +64,8 @@ public class ImageResultFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ResultImagesRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            resultImagesRecyclerViewAdapter = new ResultImagesRecyclerViewAdapter(new ArrayList<Bitmap>(), mListener);
+            recyclerView.setAdapter(resultImagesRecyclerViewAdapter);
         }
         return view;
     }
@@ -89,11 +89,15 @@ public class ImageResultFragment extends Fragment {
     }
 
 
-    public void lol() {
-        Toast.makeText(getActivity(), "LOL!",
-                Toast.LENGTH_SHORT).show();
-    }
+    public void addImage(Bitmap bitmap) {
+        resultImagesRecyclerViewAdapter.addItem(bitmap);
+//        Observable.range(0,50)
+//                .subscribeOn(Schedulers.computation())
+//                .delay(1000, TimeUnit.MILLISECONDS)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(integer -> mProgressBar.setProgress(integer));
 
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -107,6 +111,6 @@ public class ImageResultFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Bitmap item);
     }
 }

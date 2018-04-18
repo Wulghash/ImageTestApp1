@@ -1,12 +1,13 @@
 package com.wulghash.imagetestapp;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.wulghash.imagetestapp.ImageWork.ImageFragment;
 import com.wulghash.imagetestapp.ResultTable.ImageResultFragment;
-import com.wulghash.imagetestapp.ResultTable.dummy.DummyContent;
+
 
 public class MainActivity extends AppCompatActivity implements ImageResultFragment.OnListFragmentInteractionListener {
 
@@ -15,10 +16,12 @@ public class MainActivity extends AppCompatActivity implements ImageResultFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageFragment fragment = new ImageFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.image_fragment, fragment);
-        transaction.commit();
+        if (null == savedInstanceState) {
+            ImageFragment fragment = new ImageFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.image_fragment, fragment);
+            transaction.commit();
+        }
 
         ImageResultFragment imageResultFragment = new ImageResultFragment();
         FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements ImageResultFragme
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(Bitmap item) {
 
     }
 }

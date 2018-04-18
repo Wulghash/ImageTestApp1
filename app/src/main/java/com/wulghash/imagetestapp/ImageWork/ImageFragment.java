@@ -6,11 +6,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -26,6 +28,9 @@ import android.widget.Toast;
 
 import com.wulghash.imagetestapp.R;
 import com.wulghash.imagetestapp.ResultTable.ImageResultFragment;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -61,6 +66,7 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupButtons();
+        setRetainInstance(true);
     }
 
     private void setupButtons() {
@@ -119,12 +125,13 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
         Bitmap flipImage = Bitmap.createBitmap(bitmap, 0,0 , width, height, matrix, true);
 
         mainImage.setImageBitmap(flipImage);
+        onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap());
     }
 
 
     @Override
     public void showNoImageError() {
-        Toast.makeText(getActivity(), "Select image first!",
+        Toast.makeText(getActivity(), "Select imageView first!",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -162,6 +169,14 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
         }
 
         if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK) {
+            try {
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                mainImage.setImageBitmap(selectedImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -175,6 +190,7 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
         rotateAnim.setFillAfter(true);
         mainImage.startAnimation(rotateAnim);
         degrees = degrees + 90;
+        onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap());
     }
 
     @Override
@@ -183,12 +199,14 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
         matrix.setSaturation(0);
         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
         mainImage.setColorFilter(filter);
+        onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap());
 
     }
 
     @Override
-    public void onAddImageToResult() {
+    public void onAddImageToResult(Bitmap result) {
         ImageResultFragment imageResultFragment =  (ImageResultFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.list_fragment);
+        imageResultFragment.addImage(result);
     }
 
     class Dialog {

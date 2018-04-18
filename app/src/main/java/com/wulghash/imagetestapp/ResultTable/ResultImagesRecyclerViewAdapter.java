@@ -1,29 +1,26 @@
 package com.wulghash.imagetestapp.ResultTable;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wulghash.imagetestapp.R;
 import com.wulghash.imagetestapp.ResultTable.ImageResultFragment.OnListFragmentInteractionListener;
-import com.wulghash.imagetestapp.ResultTable.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<ResultImagesRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Bitmap> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public ResultImagesRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public ResultImagesRecyclerViewAdapter(List<Bitmap> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -38,8 +35,8 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.imageView.setImageBitmap(mValues.get(position));
+     //   holder.progressBarView.setText(mValues.get(position).content);
         if (position % 2 == 0) holder.mView.setBackgroundColor(Color.GRAY);
         else holder.mView.setBackgroundColor(Color.WHITE);
 
@@ -55,6 +52,14 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
         });
     }
 
+
+    public void addItem(Bitmap bitmap) {
+        mValues.add(0, bitmap);
+       // notifyDataSetChanged();
+        notifyItemInserted(0);
+
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -62,20 +67,20 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final ImageView imageView;
+        public final ProgressBar progressBarView;
+        public Bitmap mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            imageView =  view.findViewById(R.id.result_image);
+            progressBarView =  view.findViewById(R.id.progress_image_id);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString();
         }
     }
 }
