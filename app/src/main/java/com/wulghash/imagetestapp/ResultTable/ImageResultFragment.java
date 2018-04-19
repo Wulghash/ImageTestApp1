@@ -1,7 +1,11 @@
 package com.wulghash.imagetestapp.ResultTable;
 
+import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,24 +14,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+
+import com.wulghash.imagetestapp.ImageWork.ImageFragment;
 import com.wulghash.imagetestapp.R;
+import com.wulghash.imagetestapp.ResultImage;
 
 import java.util.ArrayList;
 
-public class ImageResultFragment extends Fragment {
 
+public class ImageResultFragment extends Fragment implements ResultFragmentContract.View {
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private ResultImagesRecyclerViewAdapter resultImagesRecyclerViewAdapter;
+    private RecyclerView recyclerView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public ImageResultFragment() {
     }
 
@@ -36,7 +37,6 @@ public class ImageResultFragment extends Fragment {
     public static ImageResultFragment newInstance(int columnCount) {
         ImageResultFragment fragment = new ImageResultFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,27 +44,17 @@ public class ImageResultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image_list, container, false);
-
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            resultImagesRecyclerViewAdapter = new ResultImagesRecyclerViewAdapter(new ArrayList<Bitmap>(), mListener);
+            recyclerView = (RecyclerView) view;
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            resultImagesRecyclerViewAdapter = new ResultImagesRecyclerViewAdapter(new ArrayList<ResultImage>(), mListener);
             recyclerView.setAdapter(resultImagesRecyclerViewAdapter);
         }
         return view;
@@ -89,28 +79,42 @@ public class ImageResultFragment extends Fragment {
     }
 
 
-    public void addImage(Bitmap bitmap) {
-        resultImagesRecyclerViewAdapter.addItem(bitmap);
-//        Observable.range(0,50)
-//                .subscribeOn(Schedulers.computation())
-//                .delay(1000, TimeUnit.MILLISECONDS)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(integer -> mProgressBar.setProgress(integer));
+    public void addImage(ResultImage resultImage) {
+        resultImagesRecyclerViewAdapter.addItem(resultImage);
+        recyclerView.smoothScrollToPosition(resultImagesRecyclerViewAdapter.getItemCount()-1);
 
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void onShowListDialog(ResultImage resultImage) {
+        getOptionsDialog(resultImage).show();
+    }
+
+
+    private void onSelectOrDelete(int which, ResultImage resultImage) {
+        if (which == 0) {
+            resultImagesRecyclerViewAdapter.deleteItem(resultImage);
+        } else if (which == 1) {
+            ImageFragment imageFragment =  (ImageFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.image_fragment);
+            imageFragment.setSelectedImage(resultImage);
+        }
+    }
+
+
+    public AlertDialog getOptionsDialog(final ResultImage resultImage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.dlg_list_options);
+        builder.setItems(R.array.delete_or_select_options, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                onSelectOrDelete(which, resultImage);
+            }
+        });
+        builder.setCancelable(true);
+
+        return builder.create();
+    }
+
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Bitmap item);
+        void onListFragmentInteraction(ResultImage item);
     }
 }

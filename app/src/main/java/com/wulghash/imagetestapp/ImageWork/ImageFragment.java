@@ -8,10 +8,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.wulghash.imagetestapp.R;
+import com.wulghash.imagetestapp.ResultImage;
 import com.wulghash.imagetestapp.ResultTable.ImageResultFragment;
 
 import java.io.FileNotFoundException;
@@ -40,6 +44,11 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
+
+    public static final int MAKE_PHOTO = 0;
+    public static final int CHOOSE_IMAGE_FROM_GALLERY = 1;
+
+
 
     float degrees = 0.0f;
 
@@ -80,15 +89,13 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
         mainImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Dialog().getDialog(getActivity(),  1).show();
+                getChooseImageDialog().show();
             }
         });
         chooseImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Dialog().getDialog(getActivity(),  1).show();
-                mainImage.setVisibility(View.VISIBLE);
-                chooseImageButton.setVisibility(View.GONE);
+                getChooseImageDialog().show();
             }
         });
         rotateButton.setOnClickListener(new View.OnClickListener() {
@@ -111,24 +118,6 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
         });
 
     }
-
-    @Override
-    public void onMirrorImage() {
-        Bitmap bitmap = ((BitmapDrawable)mainImage.getDrawable()).getBitmap();
-
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        Matrix matrix = new Matrix();
-        matrix.preScale(-1, 1);
-
-        Bitmap flipImage = Bitmap.createBitmap(bitmap, 0,0 , width, height, matrix, true);
-
-        mainImage.setImageBitmap(flipImage);
-        onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap());
-    }
-
-
     @Override
     public void showNoImageError() {
         Toast.makeText(getActivity(), "Select imageView first!",
@@ -137,9 +126,9 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
 
     @Override
     public void onSelectNewImage(int item) {
-        if (item == Dialog.MAKE_PHOTO) {
+        if (item == MAKE_PHOTO) {
             onMakePhoto();
-        } else if (item == Dialog.CHOOSE_IMAGE_FROM_GALLERY) {
+        } else if (item == CHOOSE_IMAGE_FROM_GALLERY) {
             onChooseImage();
         }
     }
@@ -166,6 +155,8 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             mainImage.setImageBitmap(imageBitmap);
+            chooseImageButton.setVisibility(View.GONE);
+            mainImage.setVisibility(View.VISIBLE);
         }
 
         if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK) {
@@ -174,6 +165,8 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
                 final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 mainImage.setImageBitmap(selectedImage);
+                chooseImageButton.setVisibility(View.GONE);
+                mainImage.setVisibility(View.VISIBLE);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -182,63 +175,49 @@ public class ImageFragment extends Fragment implements ImageFragmentContact.View
 
     @Override
     public void onRotateImage() {
-        final RotateAnimation rotateAnim = new RotateAnimation(degrees, degrees + 90,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-
-        rotateAnim.setDuration(0);
-        rotateAnim.setFillAfter(true);
-        mainImage.startAnimation(rotateAnim);
-        degrees = degrees + 90;
-        onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap());
+        if (mainImage.getVisibility() != View.GONE)
+            onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap(), ResultImage.ROTATE_MODE);
+        else showNoImageError();
     }
 
     @Override
     public void onInvertColors() {
-        ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0);
-        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-        mainImage.setColorFilter(filter);
-        onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap());
-
+        if (mainImage.getVisibility() != View.GONE)
+            onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap(), ResultImage.INVERT_MODE);
+        else showNoImageError();
     }
 
     @Override
-    public void onAddImageToResult(Bitmap result) {
+    public void onMirrorImage() {
+        if (mainImage.getVisibility() != View.GONE)
+            onAddImageToResult(((BitmapDrawable)mainImage.getDrawable()).getBitmap(), ResultImage.MIRROR_MODE);
+        else showNoImageError();
+    }
+
+    @Override
+    public void onAddImageToResult(Bitmap result, int mode) {
         ImageResultFragment imageResultFragment =  (ImageResultFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.list_fragment);
-        imageResultFragment.addImage(result);
+        imageResultFragment.addImage(new ResultImage(result, mode));
     }
 
-    class Dialog {
 
-         public static final int MAKE_PHOTO = 0;
-         public static final int CHOOSE_IMAGE_FROM_GALLERY = 1;
-
-         public static final int IDD_GET_IMAGE = 1; // Идентификаторы диалоговых окон
-         public static final int IDD_ACTION_WITH_IMAGE = 2;
-
-
-         public AlertDialog getDialog(Activity activity, int ID) {
-             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-             switch(ID) {
-                case IDD_GET_IMAGE:
-                  builder.setTitle(R.string.dlg_choose_image_title);
-                  builder.setItems(R.array.choose_dlg_image_options, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        onSelectNewImage(which);
-                    }
-                });
-                builder.setCancelable(true);
-
-                return builder.create();
-            case IDD_ACTION_WITH_IMAGE: // Диалоговое окно Rate the app
-                return builder.create();
-            default:
-                return null;
-        }
+    public void setSelectedImage(ResultImage resultImage) {
+        mainImage.setImageBitmap(resultImage.getBitmap());
     }
-}
+
+
+    public AlertDialog getChooseImageDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.dlg_choose_image_title);
+        builder.setItems(R.array.choose_dlg_image_options, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                onSelectNewImage(which);
+            }
+        });
+        builder.setCancelable(true);
+
+        return builder.create();
+    }
 
 
 

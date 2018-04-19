@@ -10,4 +10,10 @@
         <item> Make photo </item>
         <item> Get image from gallery </item>
     </string-array>
+
+    <string name="dlg_list_options"> What to do? </string>
+    <string-array name="delete_or_select_options">
+        <item>  Delete image </item>
+        <item>  Select as main image </item>
+    </string-array>
 </resources>
