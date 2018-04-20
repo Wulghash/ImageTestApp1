@@ -27,5 +27,7 @@ public interface ImageFragmentContact {
 
     interface  UserActionListener {
 
+        void setView(ImageFragmentContact.View view);
+
     }
 }

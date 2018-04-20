@@ -19,12 +19,20 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wulghash.imagetestapp.R;
 import com.wulghash.imagetestapp.ResultImage;
 import com.wulghash.imagetestapp.ResultTable.ImageResultFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<ResultImagesRecyclerViewAdapter.ViewHolder> {
 
@@ -48,6 +56,7 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
+        setupProgressBar(holder);
         holder.imageView.setImageBitmap(mValues.get(position).getBitmap());
         setupImage(holder.imageView, mValues.get(position).getMode());
      //   holder.progressBarView.setText(mValues.get(position).content);
@@ -66,6 +75,35 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
         });
     }
 
+    private void setupProgressBar(final ViewHolder holder) {
+        Random r = new Random();
+        int i1 = r.nextInt(30 - 5) + 5;
+        long loong = i1;
+        holder.progressBarView.setVisibility(View.VISIBLE);
+        holder.imageView.setVisibility(View.GONE);
+        Observable.intervalRange(0L, 100L, 0, loong*10, TimeUnit.MILLISECONDS,
+                AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<Long>() {
+                    @Override
+                    public void onComplete() {
+                        holder.progressBarView.setVisibility(View.GONE);
+                        holder.imageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(Long o) {
+                        long l = o;
+                        int i = (int) l;
+                        holder.progressBarView.setProgress(i);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+    }
+
     private void setupImage(ImageView imageView, int mode) {
         if (mode == 1) {
             Bitmap myImg = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
@@ -80,10 +118,6 @@ public class ResultImagesRecyclerViewAdapter extends RecyclerView.Adapter<Result
         }
 
         if (mode == 2) {
-//            ColorMatrix matrix = new ColorMatrix();
-//            matrix.setSaturation(0);
-//            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-//            imageView.setColorFilter(filter);
             Bitmap myImg = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
             ColorMatrix bwMatrix =new ColorMatrix();
             bwMatrix.setSaturation(0);

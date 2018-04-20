@@ -4,11 +4,13 @@
     <string name="invert_btn"> Invert colors </string>
     <string name="mirror_btn"> Mirror image </string>
     <string name="choose_image_button"> Choose image </string>
+    <string name="type_url_title"> Enter URL </string>
 
     <string name="dlg_choose_image_title"> Choose image </string>
     <string-array name="choose_dlg_image_options">
         <item> Make photo </item>
         <item> Get image from gallery </item>
+        <item> Get image from URL </item>
     </string-array>
 
     <string name="dlg_list_options"> What to do? </string>
