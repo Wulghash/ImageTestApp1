@@ -1,14 +1,11 @@
 package com.wulghash.imagetestapp.ResultTable;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,8 +14,9 @@ import android.view.ViewGroup;
 
 
 import com.wulghash.imagetestapp.ImageWork.ImageFragment;
+import com.wulghash.imagetestapp.Model.ResultImageDatabaseHelper;
 import com.wulghash.imagetestapp.R;
-import com.wulghash.imagetestapp.ResultImage;
+import com.wulghash.imagetestapp.Model.ResultImage;
 
 import java.util.ArrayList;
 
@@ -28,22 +26,21 @@ public class ImageResultFragment extends Fragment implements ResultFragmentContr
     private OnListFragmentInteractionListener mListener;
     private ResultImagesRecyclerViewAdapter resultImagesRecyclerViewAdapter;
     private RecyclerView recyclerView;
+    private ArrayList<ResultImage> items = new ArrayList<>();
+    private ResultFragmentContract.UserActionListener resultFragmentPresenter;
+    private ResultImageDatabaseHelper resultImageDatabaseHelper;
 
     public ImageResultFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ImageResultFragment newInstance(int columnCount) {
-        ImageResultFragment fragment = new ImageResultFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        resultFragmentPresenter = new ResultFragmentPresenter(this);
+        resultImageDatabaseHelper = new ResultImageDatabaseHelper(getActivity());
+        resultFragmentPresenter.onLoadSavedImages(resultImageDatabaseHelper);
+
     }
 
     @Override
@@ -54,7 +51,7 @@ public class ImageResultFragment extends Fragment implements ResultFragmentContr
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            resultImagesRecyclerViewAdapter = new ResultImagesRecyclerViewAdapter(new ArrayList<ResultImage>(), mListener);
+            resultImagesRecyclerViewAdapter = new ResultImagesRecyclerViewAdapter(items, mListener, this);
             recyclerView.setAdapter(resultImagesRecyclerViewAdapter);
         }
         return view;
@@ -62,27 +59,31 @@ public class ImageResultFragment extends Fragment implements ResultFragmentContr
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    @Override
+    public void addSavedImagesFromBd(ResultImage resultImage) {
+        resultImage.setDownloaded(true);
+        addImageToResult(resultImage);
+    }
+
+    @Override
+    public void addImageToResult(ResultImage resultImage) {
+        items.add(resultImage);
+        resultImagesRecyclerViewAdapter.notifyItemInserted(items.size()-1);
+        recyclerView.smoothScrollToPosition(items.size() - 1);
+
+    }
 
     public void addImage(ResultImage resultImage) {
-        resultImagesRecyclerViewAdapter.addItem(resultImage);
-        recyclerView.smoothScrollToPosition(resultImagesRecyclerViewAdapter.getItemCount()-1);
+        resultFragmentPresenter.onSaveNewImage(resultImage, resultImageDatabaseHelper);
+    }
 
+    public void onDeleteFromBd(ResultImage resultImage) {
+        resultFragmentPresenter.onDeleteImage(resultImage, resultImageDatabaseHelper);
     }
 
     @Override
@@ -94,6 +95,7 @@ public class ImageResultFragment extends Fragment implements ResultFragmentContr
     private void onSelectOrDelete(int which, ResultImage resultImage) {
         if (which == 0) {
             resultImagesRecyclerViewAdapter.deleteItem(resultImage);
+            onDeleteFromBd(resultImage);
         } else if (which == 1) {
             ImageFragment imageFragment =  (ImageFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.image_fragment);
             imageFragment.setSelectedImage(resultImage);
@@ -117,4 +119,5 @@ public class ImageResultFragment extends Fragment implements ResultFragmentContr
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(ResultImage item);
     }
+
 }

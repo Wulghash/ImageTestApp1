@@ -10,55 +10,59 @@
         android:visibility="gone"
         android:id="@+id/main_image"
         android:layout_width="175dp"
-        android:layout_height="180dp"
+        android:layout_height="135dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <LinearLayout
+    <Button
+        android:id="@+id/rotate_btn"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/rotate_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/invert_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="36dp"
-        android:orientation="vertical"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="104dp"
+        android:text="@string/invert_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/mirror_btn"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="56dp"
+        android:text="@string/mirror_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-        <Button
-            android:layout_marginLeft="18dp"
-            android:id="@+id/rotate_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/rotate_btn" />
 
-        <Button
-            android:id="@+id/invert_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/invert_btn" />
-
-        <Button
-            android:layout_marginLeft="4dp"
-            android:id="@+id/mirror_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mirror_btn" />
-
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/choose_image_button"
-        android:layout_width="wrap_content"
-        android:layout_height="111dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="79dp"
+        android:layout_height="78dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="32dp"
         android:text="@string/choose_image_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -68,9 +72,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="75dp"
         android:layout_height="74dp"
-        android:layout_marginLeft="72dp"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="36dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
